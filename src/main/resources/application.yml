@@ -35,5 +35,6 @@ mybatis:
 community:
   path:
     domain: http://localhost:8080
+    upload: D:/projectdev/community/image
 
 

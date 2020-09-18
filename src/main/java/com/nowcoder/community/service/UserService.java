@@ -1,6 +1,8 @@
 package com.nowcoder.community.service;
 
+import com.nowcoder.community.dao.LoginTicketMapper;
 import com.nowcoder.community.dao.UserMapper;
+import com.nowcoder.community.entity.LoginTicket;
 import com.nowcoder.community.entity.User;
 import com.nowcoder.community.util.CommonUtils;
 import com.nowcoder.community.util.CommunityConstant;
@@ -12,10 +14,7 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class UserService implements CommunityConstant {
@@ -28,6 +27,9 @@ public class UserService implements CommunityConstant {
 
     @Autowired
     private TemplateEngine templateEngine;
+
+    @Autowired
+    private LoginTicketMapper loginTicketMapper;
 
     @Value("${community.path.domain}")
     private String domain;
@@ -107,5 +109,60 @@ public class UserService implements CommunityConstant {
 
     }
 
+    public Map<String,Object> login(String username,String password,boolean rememberme){
+        Map<String,Object> map = new HashMap<>();
+
+        if(StringUtils.isBlank(username)){
+            map.put("usernameMsg","账号不能为空");
+            return map;
+        }
+        if(StringUtils.isBlank(password)){
+            map.put("passwordMsg","密码不能为空");
+            return map;
+        }
+
+        User user = userMapper.selectByUserName(username);
+        if(user == null){
+            map.put("usernameMsg","该账号不存在");
+            return map;
+        }
+
+        password = CommonUtils.md5(password+user.getSalt());
+        if(!user.getPassword().equals(password)){
+            map.put("passwordMsg","密码不正确");
+            return map;
+        }
+
+        //生成登录凭证
+        LoginTicket loginTicket = new LoginTicket();
+        loginTicket.setUserId(user.getId());
+        loginTicket.setTicket(CommonUtils.generateUUID());
+        loginTicket.setStatus(0);//有效
+        Date date = new Date();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);// 设置起时间
+        if(rememberme){
+            cal.add(Calendar.YEAR, 1);// 增加一年
+            loginTicket.setExpired(cal.getTime());
+        }
+        cal.add(Calendar.DATE, 1);// 增加一天
+        loginTicket.setExpired(cal.getTime());
+        loginTicketMapper.insertLoginTicket(loginTicket);
+
+        map.put("ticket",loginTicket.getTicket());
+        return map;
+    }
+
+    public void layout(String ticket){
+        loginTicketMapper.updateStatus(ticket,1);//失效
+    }
+
+    public LoginTicket getByTicket(String ticket){
+        return loginTicketMapper.selectByTicket(ticket);
+    }
+
+    public void updateHeader(int id,String url){
+        userMapper.updateHeader(id,url);
+    }
 
 }
