@@ -16,6 +16,9 @@ import org.thymeleaf.context.Context;
 
 import java.util.*;
 
+/**
+ * @author MrDong
+ */
 @Service
 public class UserService implements CommunityConstant {
 
@@ -164,5 +167,9 @@ public class UserService implements CommunityConstant {
     public void updateHeader(int id,String url){
         userMapper.updateHeader(id,url);
     }
+
+    public User findUserByName(String username){
+        return userMapper.selectByUserName(username);
+    };
 
 }

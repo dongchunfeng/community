@@ -89,6 +89,7 @@ public class SensitiveFilter {
                     begin++;
                 }
                 position++;
+                continue;
             }
 
             //检查下级节点

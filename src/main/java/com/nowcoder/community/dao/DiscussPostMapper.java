@@ -19,10 +19,16 @@ public interface DiscussPostMapper {
     List<DiscussPost> selectAllDiscussPost(int userId, int offset, int limit);
 
     /**
-     * 查询帖子总数   有且只有一个参数时需加上@Param 写上别名
+     * 查询帖子总数   有且只有一个参数并且在<if></>中使用时需加上@Param 写上别名
      * @param userId
      * @return
      */
     int selectCount(@Param("userId") int userId);
+
+    int insertDiscussPost(DiscussPost discussPost);
+
+    DiscussPost selectDiscussPostById(int id);
+
+    int updateDiscussCount(int id,int commentCount);
 
 }
