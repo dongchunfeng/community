@@ -44,7 +44,7 @@ public class MessageController {
             map.put("conversation", message);
             //当前会话详情的条数
             map.put("letterCount", messageService.findLettersCount(message.getConversationId()));
-            //当前会话未读的条数le
+            //当前会话未读的条数
             map.put("unreadCount", messageService.findLetterUnreadCount(user.getId(), message.getConversationId()));
             int targetId = user.getId() == message.getFromId() ? message.getToId() : message.getFromId();
             map.put("target", userService.findUserById(targetId));
@@ -63,6 +63,7 @@ public class MessageController {
     public String getLetterDet(@PathVariable String conversationId, Page page, Model model) {
         page.setLimit(5);
         page.setPath("/letter/detail/" + conversationId);
+        //会话详情的总数
         page.setRows(messageService.findLettersCount(conversationId));
 
         //会话详情信息
@@ -71,6 +72,7 @@ public class MessageController {
         for (Message message : letterList) {
             Map<String, Object> map = new HashMap<>();
             map.put("letter", message);
+            //发送者
             map.put("fromUser", userService.findUserById(message.getFromId()));
             letters.add(map);
         }

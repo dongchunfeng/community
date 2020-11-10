@@ -140,15 +140,19 @@ public class UserService implements CommunityConstant {
         LoginTicket loginTicket = new LoginTicket();
         loginTicket.setUserId(user.getId());
         loginTicket.setTicket(CommonUtils.generateUUID());
-        loginTicket.setStatus(0);//有效
+        //有效
+        loginTicket.setStatus(0);
         Date date = new Date();
         Calendar cal = Calendar.getInstance();
-        cal.setTime(date);// 设置起时间
+        // 设置起时间
+        cal.setTime(date);
         if(rememberme){
-            cal.add(Calendar.YEAR, 1);// 增加一年
+            // 增加一年
+            cal.add(Calendar.YEAR, 1);
             loginTicket.setExpired(cal.getTime());
         }
-        cal.add(Calendar.DATE, 1);// 增加一天
+        // 增加一天
+        cal.add(Calendar.HOUR, 1);
         loginTicket.setExpired(cal.getTime());
         loginTicketMapper.insertLoginTicket(loginTicket);
 
@@ -157,7 +161,8 @@ public class UserService implements CommunityConstant {
     }
 
     public void layout(String ticket){
-        loginTicketMapper.updateStatus(ticket,1);//失效
+        //失效
+        loginTicketMapper.updateStatus(ticket,1);
     }
 
     public LoginTicket getByTicket(String ticket){

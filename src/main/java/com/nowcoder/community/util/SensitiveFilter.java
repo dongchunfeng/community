@@ -13,6 +13,9 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 过滤字符算法
+ */
 @Component
 @Slf4j
 public class SensitiveFilter {

@@ -1,6 +1,9 @@
 package com.nowcoder.community.util;
 
-//常量接口
+/**
+ * 常量接口
+ * @author MrDong
+ */
 public interface CommunityConstant {
 
     int ACTIVATION_SUCCESS = 0;
@@ -9,7 +12,7 @@ public interface CommunityConstant {
 
     int ACTIVATION_FAIL = 2;
 
-    int DEFAULT_EXPIRED_SECONDS = 3600*24;
+    int DEFAULT_EXPIRED_SECONDS = 3600;
 
     int REMEMBER_EXPIRED_SECONDS = 3600*24*365;
 

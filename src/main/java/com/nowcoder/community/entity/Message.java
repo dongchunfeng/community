@@ -8,8 +8,8 @@ import java.util.Date;
 public class Message {
 
     private int id;
-    private int fromId;
-    private int toId;
+    private int fromId;  //发送者
+    private int toId;  //接受者
     private String conversationId;
     private String content;
     private int status;

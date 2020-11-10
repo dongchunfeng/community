@@ -4,6 +4,9 @@ package com.nowcoder.community.util;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @author MrDong
+ */
 public class CookieUtils {
 
     public static String getValue(HttpServletRequest request, String name) {

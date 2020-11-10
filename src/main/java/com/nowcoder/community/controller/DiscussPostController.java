@@ -62,7 +62,7 @@ public class DiscussPostController implements CommunityConstant {
         page.setPath("/discuss/detail/"+discussPostId);
         page.setRows(post.getCommentCount());
 
-        //评论     回复评论
+        //查询帖子评论
         List<Comment> commentList =commentService.selectCommentByEntity(ENTITY_TYPE_POST,post.getId(),page.getOffset(),page.getLimit());
         //评论列表
         List<Map<String,Object>> commentVOList = new ArrayList<>();
@@ -72,8 +72,9 @@ public class DiscussPostController implements CommunityConstant {
                 commentVO.put("comment",comment);
                 commentVO.put("user",userService.findUserById(comment.getUserId()));
 
-                //回复评论列表
+                //查询回复评论列表
                 List<Comment> replyComment = commentService.selectCommentByEntity(ENTITY_TYPE_COMMENT, comment.getId(), 0, Integer.MAX_VALUE);
+                //回复列表
                 List<Map<String,Object>> replyVOList = new ArrayList<>();
                 if(replyComment!=null){
                     for (Comment reply : replyComment){

@@ -78,7 +78,11 @@ public class UserController {
         return "redirect:/index";
     }
 
-    //获取头像
+    /**
+     * 获取头像
+     * @param fileName
+     * @param response
+     */
     @RequestMapping(path = "/header/{fileName}",method = RequestMethod.GET)
     public void getHeaderUrl(@PathVariable String fileName, HttpServletResponse response){
         fileName = uploadPath + "/" + fileName;
