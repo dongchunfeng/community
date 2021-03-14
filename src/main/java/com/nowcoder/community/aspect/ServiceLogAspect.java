@@ -33,6 +33,9 @@ public class ServiceLogAspect {
     public void before(JoinPoint joinPoint){
         //用户[xxx] 在date 访问了哪个方法
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes)RequestContextHolder.getRequestAttributes();
+        if(requestAttributes==null){
+            return;
+        }
         HttpServletRequest request = requestAttributes.getRequest();
         String ip = request.getRemoteHost();
         String dates = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());

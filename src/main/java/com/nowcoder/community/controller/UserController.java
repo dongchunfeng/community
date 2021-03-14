@@ -1,9 +1,13 @@
 package com.nowcoder.community.controller;
 
 import com.nowcoder.community.annotation.LoginRequired;
+import com.nowcoder.community.entity.Comment;
+import com.nowcoder.community.entity.DiscussPost;
+import com.nowcoder.community.entity.Page;
 import com.nowcoder.community.entity.User;
-import com.nowcoder.community.service.UserService;
+import com.nowcoder.community.service.*;
 import com.nowcoder.community.util.CommonUtils;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.HostHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +25,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -37,6 +45,14 @@ public class UserController {
     private HostHolder hostHolder;
     @Autowired
     private UserService userService;
+    @Autowired
+    private LikeService likeService;
+    @Autowired
+    private FollowService followService;
+    @Autowired
+    private CommentService commentService;
+    @Autowired
+    private DiscussPostService discussPostService;
 
     @LoginRequired
     @RequestMapping(path = "/setting", method = RequestMethod.GET)
@@ -44,6 +60,27 @@ public class UserController {
         return "/site/setting";
     }
 
+    @LoginRequired
+    @RequestMapping(path = "/myreply/{userId}", method = RequestMethod.GET)
+    public String getMyReplyPage(@PathVariable("userId")int userId, Page page, Model model) {
+        User user = userService.findUserById(userId);
+        page.setLimit(5);
+        page.setPath("/myreply"+userId);
+        page.setRows(commentService.findReplyByCount(CommunityConstant.ENTITY_TYPE_POST,userId));
+        List<Comment> list= commentService.findReplyByUserId(CommunityConstant.ENTITY_TYPE_POST,userId,page.getOffset(),page.getLimit());
+        List<Map<String, Object>> myReplyList = new ArrayList<>();
+        //查询帖子标题
+        for (Comment comment : list){
+            Map<String, Object> map = new HashMap<>();
+            DiscussPost post = discussPostService.getDiscussPostById(comment.getEntityId());
+            map.put("post",post);
+            map.put("comment",comment);
+            myReplyList.add(map);
+        }
+        model.addAttribute("myreplys",myReplyList);
+        model.addAttribute("user",user);
+        return "/site/my-reply";
+    }
     @LoginRequired
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
@@ -103,5 +140,33 @@ public class UserController {
         }
 
     }
+
+
+    @RequestMapping(path = "/profile/{userId}",method = RequestMethod.GET)
+    public String profile(@PathVariable("userId") int userId,Model model){
+        User user = userService.findUserById(userId);
+        if(user==null){
+            throw new RuntimeException("用户为空");
+        }
+        //点赞数量
+        int userLikeCount = likeService.findUserLikeCount(userId);
+        model.addAttribute("user",user);
+        model.addAttribute("likeCount",userLikeCount);
+        //关注者数量
+        long followeeCount = followService.findFolloweeCount(userId, CommunityConstant.ENTITY_TYPE_USER);
+        //粉丝数量
+        long followerCount = followService.findFollowerCount(CommunityConstant.ENTITY_TYPE_USER, userId);
+        model.addAttribute("followeeCount",followeeCount);
+        model.addAttribute("followerCount",followerCount);
+        //是否已关注
+        boolean hasFollowed = false;
+        if(hostHolder.getUser()!=null){
+            hasFollowed = followService.hasFollowed(hostHolder.getUser().getId(), CommunityConstant.ENTITY_TYPE_USER, userId);
+        }
+        model.addAttribute("hasFollowed",hasFollowed);
+        return "/site/profile";
+    }
+
+
 
 }

@@ -1,8 +1,11 @@
 package com.nowcoder.community.controller;
 
+import com.nowcoder.community.entity.Event;
 import com.nowcoder.community.entity.User;
+import com.nowcoder.community.event.EventProducer;
 import com.nowcoder.community.service.LikeService;
 import com.nowcoder.community.util.CommonUtils;
+import com.nowcoder.community.util.CommunityConstant;
 import com.nowcoder.community.util.HostHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -21,28 +24,43 @@ import java.util.Map;
  * @Date 2020/10/23
  */
 @Controller
-public class LikeController {
+public class LikeController implements CommunityConstant {
 
     @Autowired
     private LikeService likeService;
 
     @Autowired
     private HostHolder hostHolder;
+    @Autowired
+    private EventProducer eventProducer;
 
-    @RequestMapping(path = "/like",method = RequestMethod.POST)
+    @RequestMapping(path = "/like", method = RequestMethod.POST)
     @ResponseBody
-    public String like(int entityType,int entityId){
+    public String like(int entityType, int entityId, int entityUserId, int postId) {
         User user = hostHolder.getUser();
         //点赞
-        likeService.like(user.getId(), entityType, entityId);
+        likeService.like(user.getId(), entityType, entityId, entityUserId);
         //点赞数量
         long entityLikeCount = likeService.findEntityLikeCount(entityType, entityId);
         //点赞状态
         int entityLikeStatus = likeService.findEntityLikeStatus(user.getId(), entityType, entityId);
-        Map<String,Object> map = new HashMap<>();
-        map.put("likeCount",entityLikeCount);
-        map.put("likeStatus",entityLikeStatus);
-        return CommonUtils.getJSONString(0,null,map);
+        Map<String, Object> map = new HashMap<>();
+        map.put("likeCount", entityLikeCount);
+        map.put("likeStatus", entityLikeStatus);
+
+        if (entityLikeStatus == 1) {
+            Event event = new Event()
+                    .setTopic(TOPIC_LIKE)
+                    .setUserId(user.getId())
+                    .setEntityType(entityType)
+                    .setEntityId(entityId)
+                    .setEntityUserId(entityUserId)
+                    .setData("postId", postId);
+            eventProducer.fireEvent(event);
+        }
+
+
+        return CommonUtils.getJSONString(0, null, map);
     }
 
 

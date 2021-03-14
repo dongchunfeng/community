@@ -23,16 +23,16 @@ public class CommentService implements CommunityConstant {
     @Autowired
     private DiscussPostService discussPostService;
 
-    public List<Comment> selectCommentByEntity(int entityType,int entityId,int offset,int limit){
-        return commentMapper.selectByEntity(entityType,entityId,offset,limit);
+    public List<Comment> selectCommentByEntity(int entityType, int entityId, int offset, int limit) {
+        return commentMapper.selectByEntity(entityType, entityId, offset, limit);
     }
 
-    public int findCommentCount(int entityType,int entityId){
-        return commentMapper.selectByCount(entityType,entityId);
+    public int findCommentCount(int entityType, int entityId) {
+        return commentMapper.selectByCount(entityType, entityId);
     }
 
-    public int addComment(Comment comment){
-        if(comment==null){
+    public int addComment(Comment comment) {
+        if (comment == null) {
             throw new IllegalArgumentException("参数不能为空");
         }
         //过滤敏感词
@@ -41,11 +41,24 @@ public class CommentService implements CommunityConstant {
         int row = commentMapper.insertComment(comment);
 
         //更新贴子评论的数量
-        if(comment.getEntityType() == ENTITY_TYPE_POST){
+        if (comment.getEntityType() == ENTITY_TYPE_POST) {
             int i = commentMapper.selectByCount(comment.getEntityType(), comment.getEntityId());
-            discussPostService.updateCommentCount(comment.getEntityId(),i);
+            discussPostService.updateCommentCount(comment.getEntityId(), i);
         }
         return row;
     }
+
+    public List<Comment> findReplyByUserId(int entityType, int userId, int offset, int limit) {
+        return commentMapper.selectReplyByUserId(entityType, userId, offset, limit);
+    }
+
+    public int findReplyByCount(int entityType, int userId) {
+        return commentMapper.selectReplyByCount(entityType, userId);
+    }
+
+    public Comment findCommentById(int id) {
+        return commentMapper.selectCommentById(id);
+    }
+
 
 }
