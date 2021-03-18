@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -109,7 +110,7 @@ public class LoginController implements CommunityConstant {
 
         //将验证码存入redis
         String kapthcha = RedisKeyUtil.getKapthcha(s);
-        redisTemplate.opsForValue().set(kapthcha,text,60, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(kapthcha, text, 60, TimeUnit.SECONDS);
 
         //将图片输出给浏览器
         response.setContentType("image/png");
@@ -125,11 +126,11 @@ public class LoginController implements CommunityConstant {
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public String login(String username, String password, String code, boolean rememberme, Model model,
                         HttpSession session, HttpServletResponse response,
-                        @CookieValue("kaptchaOwner")String kaptchaOwner) {
+                        @CookieValue("kaptchaOwner") String kaptchaOwner) {
         //比对验证码
         //String kaptcha = (String) session.getAttribute("kaptcha");
         String kaptcha = null;
-        if(StringUtils.isNotBlank(kaptchaOwner)){
+        if (StringUtils.isNotBlank(kaptchaOwner)) {
             String kapthchaKey = RedisKeyUtil.getKapthcha(kaptchaOwner);
             kaptcha = (String) redisTemplate.opsForValue().get(kapthchaKey);
         }
@@ -139,10 +140,10 @@ public class LoginController implements CommunityConstant {
         }
 
         //验证账号密码
-        int remember = rememberme?REMEMBER_EXPIRED_SECONDS:DEFAULT_EXPIRED_SECONDS;
+        int remember = rememberme ? REMEMBER_EXPIRED_SECONDS : DEFAULT_EXPIRED_SECONDS;
         Map<String, Object> login = userService.login(username, password, rememberme);
         if (login.containsKey("ticket")) {
-            Cookie cookie = new Cookie("ticket",login.get("ticket").toString());
+            Cookie cookie = new Cookie("ticket", login.get("ticket").toString());
             cookie.setPath(contextPath);
             cookie.setMaxAge(remember);
             response.addCookie(cookie);
@@ -155,9 +156,10 @@ public class LoginController implements CommunityConstant {
 
     }
 
-    @RequestMapping(path="/layout",method = RequestMethod.GET)
-    public String layout(@CookieValue("ticket") String ticket){
+    @RequestMapping(path = "/layout", method = RequestMethod.GET)
+    public String layout(@CookieValue("ticket") String ticket) {
         userService.layout(ticket);
+        SecurityContextHolder.clearContext();
         return "redirect:/login";
     }
 

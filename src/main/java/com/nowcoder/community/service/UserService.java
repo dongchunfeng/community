@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -196,12 +197,11 @@ public class UserService implements CommunityConstant {
     }
 
     /**
-     *
+     * @return {com.nowcoder.community.entity.User}
      * @author dongchunfeng
      * @description //TODO 根据用户名查询用户信息
      * @date 21:38 2020/12/9
      * @params [username]
-     * @return {com.nowcoder.community.entity.User}
      **/
     public User findUserByName(String username) {
         return userMapper.selectByUserName(username);
@@ -226,5 +226,33 @@ public class UserService implements CommunityConstant {
         String userKey = RedisKeyUtil.getUserKey(userId);
         redisTemplate.delete(userKey);
     }
+
+    /**
+     * 判断权限是什么
+     *
+     * @param userId
+     * @return
+     */
+    public Collection<? extends GrantedAuthority> getAuthorities(int userId) {
+        User user = this.findUserById(userId);
+
+        List<GrantedAuthority> list = new ArrayList<>();
+        list.add(new GrantedAuthority() {
+            @Override
+            public String getAuthority() {
+                switch (user.getType()){
+                    case 1:
+                        return AUTHORITY_USER;
+                    case 2:
+                        return AUTHORITY_ADMIN;
+                    default:
+                        return  AUTHORITY_MODERATOR;
+                }
+            }
+        });
+
+        return list;
+    }
+
 
 }

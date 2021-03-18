@@ -28,29 +28,36 @@ public class HomeController implements CommunityConstant {
     @Autowired
     private LikeService likeService;
 
-    @RequestMapping(path = "/index",method = RequestMethod.GET)
-    public String getIndexPage(Model model, Page page){
+    @RequestMapping(path = "/index", method = RequestMethod.GET)
+    public String getIndexPage(Model model, Page page) {
         page.setRows(discussPostService.findDiscussPostCount(0));
         page.setPath("/index");
 
         List<DiscussPost> discussPost = discussPostService.findDiscussPost(0, page.getOffset(), page.getLimit());
-        List<Map<String,Object>> disPostList = new ArrayList<>();
-        for (DiscussPost post:discussPost) {
-            Map<String,Object> map = new HashMap<>();
-            map.put("post",post);
-            map.put("user",userService.findUserById(post.getUserId()));
+        List<Map<String, Object>> disPostList = new ArrayList<>();
+        for (DiscussPost post : discussPost) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("post", post);
+            map.put("user", userService.findUserById(post.getUserId()));
 
             long entityLikeCount = likeService.findEntityLikeCount(CommunityConstant.ENTITY_TYPE_POST, post.getId());
-            map.put("likeCount",entityLikeCount);
+            map.put("likeCount", entityLikeCount);
 
             disPostList.add(map);
         }
-        model.addAttribute("discussPosts",disPostList);
+        model.addAttribute("discussPosts", disPostList);
         return "/index";
     }
 
-    @RequestMapping(path = "/error",method = RequestMethod.GET)
-    public String getErrorPage(){
+    @RequestMapping(path = "/error", method = RequestMethod.GET)
+    public String getErrorPage() {
         return "/error/500";
     }
+
+
+    @RequestMapping(path = "/denied", method = RequestMethod.GET)
+    public String getDeniedPage() {
+        return "/error/404";
+    }
+
 }

@@ -12,10 +12,19 @@ import java.util.Map;
  */
 public class Event {
 
+    /**
+     * 主题
+     */
     private String topic;
+    /**
+     * 发送者用户id
+     */
     private int userId;
     private int entityType;
     private int entityId;
+    /**
+     * 接受者用户Id
+     */
     private int entityUserId;
     private Map<String, Object> data = new HashMap<>();
 
