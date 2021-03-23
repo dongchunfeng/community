@@ -116,7 +116,7 @@ public class FollowController implements CommunityConstant {
     }
 
     /**
-     * 查询当前用户是否关注 没关注的用户
+     * 查查询当前用户是否关注该实体
      *
      * @param userId
      * @return

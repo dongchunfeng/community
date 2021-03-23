@@ -81,7 +81,8 @@ public class UserController {
         model.addAttribute("user",user);
         return "/site/my-reply";
     }
-    @LoginRequired
+
+
     @RequestMapping(path = "/upload", method = RequestMethod.POST)
     public String uploadHeader(MultipartFile headerImage, Model model) {
         if (headerImage == null) {

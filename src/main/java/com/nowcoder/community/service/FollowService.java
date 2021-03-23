@@ -100,7 +100,9 @@ public class FollowService implements CommunityConstant {
 
     /**
      * 查询当前用户关注的人
-     *
+     ** 我关注了谁
+     *      * 某个用户关注的实体
+     *      * followee:userId:entityType -> zset(entityId,now)
      * @param userId
      * @param offset
      * @param limit
