@@ -17,6 +17,8 @@ public class RedisKeyUtil {
     public static final String PREFIX_KAPTHCHA = "kapthcha";
     public static final String PREFIX_TICKET = "ticket";
     public static final String PREFIX_USER = "user";
+    public static final String PREFIX_UV = "uv";
+    public static final String PREFIX_DAU = "dau";
 
     /**
      * 某个实体的赞
@@ -91,5 +93,22 @@ public class RedisKeyUtil {
         return PREFIX_USER + SPLIT + userId;
     }
 
+    //单日uv
+    public static String getUvKey(String date) {
+        return PREFIX_UV + SPLIT + date;
+    }
+
+    public static String getUvKey(String startDate, String endDate) {
+        return PREFIX_UV + SPLIT + startDate + SPLIT + endDate;
+    }
+
+    //活跃用户
+    public static String getDauKey(String date) {
+        return PREFIX_DAU + SPLIT + date;
+    }
+
+    public static String getDauKey(String startDate, String endDate) {
+        return PREFIX_DAU + SPLIT + startDate + SPLIT + endDate;
+    }
 
 }

@@ -126,7 +126,7 @@
 									  th:text="${#dates.format(followNotice.message.createTime,'yyyy-MM-dd HH:mm:ss')}">2019-04-28 14:13:25</span>
 							</h6>
 							<div>
-								<a th:href="/notice/detail/follow">用户
+								<a th:href="@{/notice/detail/follow}">用户
 									<i th:utext="${followNotice.user.username}">nowcoder</i>
 									关注了你 ...</a>
 								<ul class="d-inline font-size-12 float-right">
@@ -202,7 +202,7 @@
 		</footer>
 	</div>
 	<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.3.1/jquery.min.js" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" crossorigin="anonymous"></script>
+	<script src="https://unpkg.com/@popperjs/core@2.9.1/dist/umd/popper.min.js" crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" crossorigin="anonymous"></script>
 	<script th:src="@{/js/global.js}"></script>
 </body>
