@@ -44,6 +44,13 @@ spring:
     elasticsearch:
       cluster-name: nowcoder
       cluster-nodes: 127.0.0.1:9300
+  task:                  #TaskExecutionProperties
+    execution:
+      pool:
+        core-size: 5
+        max-size: 15
+        queue-capacity: 100
+
 # MybatisProperties
 mybatis:
   type-aliases-package: com.nowcoder.community.entity
@@ -55,3 +62,6 @@ community:
   path:
     domain: http://localhost:8080
     upload: D:/projectdev/community/image
+
+
+
