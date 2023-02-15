@@ -35,7 +35,7 @@ public class LikeService {
             public Object execute(RedisOperations redisOperations) throws DataAccessException {
                 //某个实体的赞
                 String likeKey = RedisKeyUtil.getEntityLikeKey(entityType, entityId);
-                //某个用户的赞
+                //某个用户获取的赞
                 String userLikeKey = RedisKeyUtil.getUserLikeKey(entityUserId);
 
                 Boolean member = redisOperations.opsForSet().isMember(likeKey, userId);

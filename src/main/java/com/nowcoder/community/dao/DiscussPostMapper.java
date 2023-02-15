@@ -16,7 +16,7 @@ public interface DiscussPostMapper {
      * @param limit
      * @return
      */
-    List<DiscussPost> selectAllDiscussPost(int userId, int offset, int limit);
+    List<DiscussPost> selectAllDiscussPost(int userId, int offset, int limit,int orderMode);
 
     /**
      * 查询帖子总数   有且只有一个参数并且在<if></>中使用时需加上@Param 写上别名

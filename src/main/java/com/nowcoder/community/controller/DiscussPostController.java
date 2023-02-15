@@ -189,7 +189,7 @@ public class DiscussPostController implements CommunityConstant {
         //拉黑
         discussPostService.updateStatus(id, 2);
 
-        //触发删帖事件
+        //触发删帖事件  在es中删除
         Event event = new Event()
                 .setTopic(TOPIC_DELETE)
                 .setUserId(hostHolder.getUser().getId())
